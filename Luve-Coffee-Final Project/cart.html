@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cart · Luve Coffee Roastery</title>
+<link rel="icon" href="assets/favicon.svg"><link rel="stylesheet" href="styles.css">
+<script defer src="script.js"></script>
+<script defer src="auth.js"></script>
+<script defer>
+  function render(){
+    const tbody = document.querySelector('tbody'); tbody.innerHTML='';
+    const cart = JSON.parse(localStorage.getItem('cart')||'[]');
+    let total = 0;
+    cart.forEach((it,i)=>{
+      const line = (it.price||10) * (parseInt(it.qty,10)||0);
+      total += line;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${it.name}</td><td>${it.size}</td><td>${it.grind}</td><td>${it.qty}</td><td>£${(it.price||10).toFixed(2)}</td><td>£${line.toFixed(2)}</td><td><button data-i="${i}" class="btn">Remove</button></td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('empty').style.display = cart.length ? 'none' : 'block';
+    document.getElementById('total').textContent = '£' + total.toFixed(2);
+  }
+  document.addEventListener('click',(e)=>{
+    const b = e.target.closest('button[data-i]'); if(!b) return;
+    const i = +b.getAttribute('data-i'); const cart = JSON.parse(localStorage.getItem('cart')||'[]');
+    cart.splice(i,1); localStorage.setItem('cart', JSON.stringify(cart)); render();
+  });
+  function clearCart(){ localStorage.removeItem('cart'); render(); }
+  function checkout(){
+    const cur = currentUser();
+    if(!cur){ alert('Please log in to checkout.'); location.href='login.html?return=cart'; return; }
+    const order = cartToOrder();
+    if(!order){ alert('Your cart is empty.'); return; }
+    const user = cur.user;
+    ensureSampleOrders(user);
+    user.orders.unshift(order);
+    upsertUser(user);
+    localStorage.removeItem('cart');
+    location.href = 'order-details.html?id=' + encodeURIComponent(order.id);
+  }
+  document.addEventListener('DOMContentLoaded', render);
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="index.html"><span class="logo"></span><span>Luve Coffee Roastery</span></a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="shop.html">Shop</a>
+      <a id="cartLink" href="cart.html">Cart</a>
+    </nav>
+    <div class="nav-right">
+      <a id="accountLink" class="account-link" href="login.html">Login</a>
+      <button class="theme-toggle" data-action="toggle-theme" aria-pressed="false" title="Toggle theme">
+        <img id="theme-icon" src="assets/icon-moon.svg" alt="" width="18" height="18"/><span id="theme-label">Dark</span>
+      </button>
+    </div>
+  </div>
+</header>
+<main class="container section">
+  <h1>Your Cart</h1>
+  <p id="empty" class="muted">Your cart is empty.</p>
+  <table class="table">
+    <thead><tr><th>Product</th><th>Size</th><th>Grind</th><th>Qty</th><th>Price</th><th>Line</th><th></th></tr></thead>
+    <tbody></tbody>
+    <tfoot><tr><th colspan="5" style="text-align:right">Total:</th><th id="total">£0.00</th><th></th></tr></tfoot>
+  </table>
+  <div class="cta-row">
+    <button class="btn" onclick="clearCart()">Clear Cart</button>
+    <button class="btn primary" onclick="checkout()">Checkout</button>
+  </div>
+</main>
+<footer class="site-footer"><div class="container muted">© <span id="y"></span> Luve Coffee Roastery</div>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script></footer>
+</body></html>

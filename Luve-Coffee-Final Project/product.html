@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product · Luve Coffee Roastery</title>
+<link rel="icon" href="assets/favicon.svg"><link rel="stylesheet" href="styles.css">
+<script defer src="script.js"></script>
+<script defer src="auth.js"></script>
+<script defer>
+  function qs(name){return new URLSearchParams(location.search).get(name)||"";}
+  document.addEventListener('DOMContentLoaded',()=>{
+    const name = qs('name') || 'Coffee';
+    const price = parseFloat(qs('price')||'10').toFixed(2);
+    document.getElementById('pname').textContent = name;
+    document.getElementById('pprice').textContent = '£' + price;
+    const img = document.getElementById('pimg');
+    const map = {
+      'Classic Blend':'2.jpg',
+      'Espresso Roast':'3.jpg',
+      'Organic Guatemala':'4.jpg',
+      'Ethiopia':'A.jpg',
+      'Colombia':'B.jpg',
+      'Decaf':'9.jpg'
+    };
+    img.src = map[name] || 'assets/bag.jpg';
+    img.style.width = "80px"; 
+    img.style.height = "auto";
+
+    document.getElementById('add').addEventListener('click',()=>{
+      const size = document.getElementById('size').value;
+      const grind = document.getElementById('grind').value;
+      const qty = parseInt(document.getElementById('qty').value,10)||1;
+      const item = { name, size, grind, qty, price: parseFloat(price) };
+      const cart = JSON.parse(localStorage.getItem('cart')||'[]'); cart.push(item);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert(`Added to cart: ${qty} × ${name} (£${price} each)`);
+    });
+  });
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="index.html"><span class="logo"></span><span>Luve Coffee Roastery</span></a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="shop.html">Shop</a>
+      <a id="cartLink" href="cart.html">Cart</a>
+    </nav>
+    <div class="nav-right">
+      <a id="accountLink" class="account-link" href="login.html">Login</a>
+      <button class="theme-toggle" data-action="toggle-theme" aria-pressed="false" title="Toggle theme">
+        <img id="theme-icon" src="assets/icon-moon.svg" alt="" width="18" height="18"/><span id="theme-label">Dark</span>
+      </button>
+    </div>
+  </div>
+</header>
+<main class="container section">
+  <div class="product">
+    <div><img id="pimg" class="responsive" src="2.jpg" alt="Coffee product"></div>
+    <div>
+      <h1 id="pname">Coffee</h1>
+      <p class="muted">Customise your coffee: choose size, grind, and quantity.</p>
+      <p><strong id="pprice">£12.00</strong></p>
+      <label>Size
+        <select id="size">
+          <option>250g</option><option>500g</option><option>1kg</option>
+        </select>
+      </label>
+      <label>Grind
+        <select id="grind">
+          <option>Whole Bean</option><option>Espresso</option><option>Filter</option><option>French Press</option>
+        </select>
+      </label>
+      <label>Quantity
+        <input id="qty" type="number" min="1" value="1">
+      </label>
+      <button id="add" class="btn primary">Add to Cart</button>
+      <a class="btn" href="cart.html">View Cart</a>
+      <p class="help">All orders are roasted fresh and dispatched within 1–2 business days.</p>
+    </div>
+  </div>
+</main>
+<footer class="site-footer"><div class="container muted">© <span id="y"></span> Luve Coffee Roastery</div>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script></footer>
+</body></html>

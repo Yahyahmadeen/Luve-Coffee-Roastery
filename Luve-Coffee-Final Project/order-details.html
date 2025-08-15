@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order Details · Luve Coffee Roastery</title>
+<link rel="icon" href="assets/favicon.svg"><link rel="stylesheet" href="styles.css">
+<script defer src="script.js"></script>
+<script defer src="auth.js"></script>
+<script defer>
+  function qs(name){return new URLSearchParams(location.search).get(name)||'';}
+  document.addEventListener('DOMContentLoaded',()=>{
+    const cur = requireAuth();
+    const id = qs('id');
+    const order = (cur.user.orders||[]).find(o => o.id === id);
+    if(!order){ alert('Order not found.'); location.href='account.html'; return; }
+    document.getElementById('oid').textContent = order.id;
+    document.getElementById('odate').textContent = order.date;
+    document.getElementById('ostatus').textContent = order.status;
+    const tbody = document.querySelector('tbody'); tbody.innerHTML='';
+    let total = 0;
+    order.items.forEach(it=>{
+      const line = (it.price||10) * (parseInt(it.qty,10)||0);
+      total += line;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${it.name}</td><td>${it.size}</td><td>${it.grind}</td><td>${it.qty}</td><td>£${(it.price||10).toFixed(2)}</td><td>£${line.toFixed(2)}</td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('ototal').textContent = '£' + total.toFixed(2);
+  });
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="index.html"><span class="logo"></span><span>Luve Coffee Roastery</span></a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="shop.html">Shop</a>
+      <a id="cartLink" href="cart.html">Cart</a>
+    </nav>
+    <div class="nav-right">
+      <a id="accountLink" class="account-link" href="login.html">Login</a>
+      <button class="theme-toggle" data-action="toggle-theme" aria-pressed="false" title="Toggle theme">
+        <img id="theme-icon" src="assets/icon-moon.svg" alt="" width="18" height="18"/><span id="theme-label">Dark</span>
+      </button>
+    </div>
+  </div>
+</header>
+<main class="container section">
+  <a class="btn" href="account.html">← Back to My Account</a>
+  <h1>Order <span id="oid"></span></h1>
+  <p>Date: <span id="odate"></span> · Status: <span class="badge" id="ostatus"></span></p>
+  <table class="table">
+    <thead><tr><th>Product</th><th>Size</th><th>Grind</th><th>Qty</th><th>Price</th><th>Line</th></tr></thead>
+    <tbody></tbody>
+    <tfoot><tr><th colspan="5" style="text-align:right">Total:</th><th id="ototal">£0.00</th></tr></tfoot>
+  </table>
+</main>
+<footer class="site-footer"><div class="container muted">© <span id="y"></span> Luve Coffee Roastery</div>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script></footer>
+</body></html>

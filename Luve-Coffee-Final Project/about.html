@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About · Luve Coffee Roastery</title>
+<link rel="icon" href="assets/favicon.svg"><link rel="stylesheet" href="styles.css">
+<script defer src="script.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="index.html"><span class="logo"></span><span>Luve Coffee Roastery</span></a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="shop.html">Shop</a>
+      <a id="cartLink" href="cart.html">Cart</a>
+    </nav>
+    <div class="nav-right">
+      <a id="accountLink" class="account-link" href="login.html">Login</a>
+      <button class="theme-toggle" data-action="toggle-theme" aria-pressed="false" title="Toggle theme">
+        <img id="theme-icon" src="assets/icon-moon.svg" alt="" width="18" height="18"/><span id="theme-label">Dark</span>
+      </button>
+    </div>
+  </div>
+</header>
+<main class="container section">
+  <h1>Our Story</h1>
+  <p>We’re a small, quality‑obsessed roastery. We partner with growers who share our values and roast in small batches for freshness. Each origin is profiled to showcase clarity, sweetness, and balance.</p>
+  <div class="grid-3">
+    <div class="card"><h3>Ethical Sourcing</h3><p>Long‑term relationships and fair pay for farmers.</p></div>
+    <div class="card"><h3>Craft First</h3><p>Thoughtful roast curves to highlight origin character.</p></div>
+    <div class="card"><h3>Freshness</h3><p>Roasted‑to‑order and sealed to lock in flavour.</p></div>
+  </div>
+</main>
+<footer class="site-footer"><div class="container muted">© <span id="y"></span> Luve Coffee Roastery</div>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script></footer>
+</body></html>
